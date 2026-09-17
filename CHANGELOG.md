@@ -6,6 +6,10 @@ adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Client records: create clients and search active clients by name (DV-01, #1)
+
 ### Planned for the sprint
 
 - Client records: create, find, update, make inactive
