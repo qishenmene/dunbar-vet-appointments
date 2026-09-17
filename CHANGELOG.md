@@ -6,6 +6,16 @@ adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- In-clinic consultations (DV-06): book one animal into a valid
+  fifteen-minute slot in room 1 or room 2, validated against the consulting
+  timetable (`app/timetable.py`); bookings start in a `booked` state,
+  appear on the day schedule and can be cancelled with the record kept
+- JSON API: `POST /api/animals`, `POST /api/consultations`,
+  `POST /api/consultations/<id>/cancel` and `GET /api/schedule?date=YYYY-MM-DD`
+- Day schedule includes both appointment kinds (consultations and farm visits)
+
 ### Planned for the sprint
 
 - Client records: create, find, update, make inactive

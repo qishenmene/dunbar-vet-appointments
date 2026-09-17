@@ -14,14 +14,11 @@ def test_index_page_loads(client):
 
 
 def test_empty_day_schedule_returns_empty_not_error(client):
-    """Domain rule placeholder: a day with no bookings is an empty schedule.
-
-    Detailed appointment scheduling behaviour (15-minute consult slots vs.
-    timed farm visits) is added and tested on the appointment story branches.
-    """
-    # The database initialises without error in the testing fixture.
-    from app.db import get_db
-
-    db = get_db()
-    # No domain tables exist yet in sprint 0; connection is usable.
-    assert db.execute("SELECT 1").fetchone()[0] == 1
+    """Domain rule: a day with no bookings is an empty schedule, not an error."""
+    response = client.get("/api/schedule?date=2026-09-20")  # a Sunday
+    assert response.status_code == 200
+    assert response.get_json() == {
+        "date": "2026-09-20",
+        "consultations": [],
+        "farm_visits": [],
+    }
