@@ -32,7 +32,10 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    DATABASE_PATH = "test_dunbar_vet.sqlite3"
+
+    def __init__(self):
+        # Read at instantiation so tests can point at an isolated temp database.
+        self.DATABASE_PATH = os.environ.get("DATABASE_PATH", "test_dunbar_vet.sqlite3")
 
 
 class ProductionConfig(Config):
