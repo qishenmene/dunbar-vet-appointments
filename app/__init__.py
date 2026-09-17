@@ -5,6 +5,8 @@ from flask import Flask, jsonify, render_template
 
 from config import INSTANCE_DIR, get_config
 
+from .animals import bp as animals_bp
+from .consultations import BookingError, bp as consultations_bp
 from .db import close_db, init_db_command
 
 
@@ -18,6 +20,12 @@ def create_app(config_name: str | None = None) -> Flask:
 
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.register_blueprint(animals_bp)
+    app.register_blueprint(consultations_bp)
+
+    @app.errorhandler(BookingError)
+    def handle_booking_error(exc):
+        return jsonify(error=exc.message), exc.status
 
     @app.get("/healthz")
     def healthz():

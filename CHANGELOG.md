@@ -15,6 +15,13 @@ adheres to [Semantic Versioning](https://semver.org/).
   match with its owner and contact phone (DV-04)
 - Property records: create, find, update and remove rural properties per
   client, with locality and gate/key/road access notes (DV-05)
+- In-clinic consultations (DV-06): book one animal into a valid
+  fifteen-minute slot in room 1 or room 2, validated against the consulting
+  timetable (`app/timetable.py`); bookings start in a `booked` state,
+  appear on the day schedule and can be cancelled with the record kept
+- JSON API: `POST /api/consultations`,
+  `POST /api/consultations/<id>/cancel` and `GET /api/schedule?date=YYYY-MM-DD`
+- Day schedule includes both appointment kinds (consultations and farm visits)
 
 ### Planned for the sprint
 
