@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clients — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    table { border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; }
+    th { background: #f0f4f8; }
+    .flash { background: #e6f4ea; border: 1px solid #1a7f37; padding: 0.5rem 0.8rem; border-radius: 6px; }
+    form.inline { display: inline; }
+    input { padding: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Clients</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <form class="inline" method="get" action="{{ url_for('clients.index') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search by client name" aria-label="Search clients">
+    <button type="submit">Search</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Phone</th><th>Address</th></tr>
+    </thead>
+    <tbody>
+      {% for client in clients %}
+        <tr>
+          <td>{{ client['name'] }}</td>
+          <td>{{ client['phone'] }}</td>
+          <td>{{ client['address'] }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3">{% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Add a client</h2>
+  <form method="post" action="{{ url_for('clients.create') }}">
+    <p><label>Name (required): <input type="text" name="name" required></label></p>
+    <p><label>Phone: <input type="text" name="phone"></label></p>
+    <p><label>Address: <input type="text" name="address" size="40"></label></p>
+    <button type="submit">Add client</button>
+  </form>
+</body>
+</html>
