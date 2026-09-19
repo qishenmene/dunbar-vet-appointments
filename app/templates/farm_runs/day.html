@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Farm run sheet {{ day }} — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    table { border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; }
+    tr.cancelled td { background: #f5f5f5; color: #7b8794; text-decoration: line-through; }
+    .badge { color: #b42318; font-weight: bold; text-decoration: none; }
+    .nav a, .nav form { display: inline-block; margin-right: 1rem; }
+    input[type=date], button { padding: 0.3rem; font-family: inherit; }
+  </style>
+</head>
+<body>
+  <h1>Farm run sheet — {{ weekday }} {{ day.strftime('%d %B %Y') }}</h1>
+
+  <div class="nav">
+    <a href="{{ url_for('farm_runs.run_sheet', date=previous_day) }}">&larr; Previous day</a>
+    <form method="get" action="{{ url_for('farm_runs.run_sheet') }}">
+      <input type="date" name="date" value="{{ day.isoformat() }}">
+      <button type="submit">Show day</button>
+    </form>
+    <a href="{{ url_for('farm_runs.run_sheet', date=next_day) }}">Next day &rarr;</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Start</th>
+        <th>Property</th>
+        <th>Locality</th>
+        <th>Client / contact</th>
+        <th>Job</th>
+        <th>Head</th>
+        <th>Est. km</th>
+        <th>Est. time</th>
+        <th>Access notes (gates, keys, ring-first)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in visits %}
+        <tr class="{{ v['status'] }}">
+          <td>
+            {% if v['status'] == 'cancelled' %}<span class="badge">CANCELLED</span>{% endif %}
+            {{ v['scheduled_at'][11:16] }}
+          </td>
+          <td>{{ v['property_name'] }}</td>
+          <td>{{ v['locality'] }}</td>
+          <td>{{ v['client_name'] }}{% if v['client_phone'] %}<br>{{ v['client_phone'] }}{% endif %}</td>
+          <td>{{ v['job_description'] }}</td>
+          <td>{% if v['head_count'] is not none %}{{ v['head_count'] }}{% endif %}</td>
+          <td>{% if v['est_km'] is not none %}{{ v['est_km'] }}{% endif %}</td>
+          <td>{{ '%.2g'|format(v['duration_minutes'] / 60) }} hr</td>
+          <td>{{ v['access_notes'] }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="9">No farm visits booked for this day.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{{ url_for('index') }}">Back to home</a></p>
+</body>
+</html>
