@@ -32,6 +32,19 @@ def index():
     )
 
 
+@animals_bp.get("/search")
+def search():
+    """Search animals by name across every client (DV-04).
+
+    Callers give the animal's name before the owner's, and the same name is
+    common (the practice has fourteen Rubys), so every match is returned with
+    its owner.
+    """
+    term = request.args.get("q", "").strip()
+    animals = search_animals(get_db(), term) if term else []
+    return render_template("animals/search.html", animals=animals, q=term)
+
+
 @animals_bp.post("/create")
 def create():
     """Create an animal for an existing client; name and species are required."""
@@ -84,6 +97,23 @@ def get_animal(db: sqlite3.Connection, animal_id: int) -> sqlite3.Row | None:
         " WHERE a.id = ?",
         (animal_id,),
     ).fetchone()
+
+
+def search_animals(db: sqlite3.Connection, term: str) -> list[sqlite3.Row]:
+    """Return every animal whose name contains ``term``, across all clients.
+
+    Matching is case-insensitive; results carry the owning client's name and
+    phone so reception can tell the fourteen Rubys apart.
+    """
+    return list(
+        db.execute(
+            "SELECT a.*, c.name AS client_name, c.phone AS client_phone"
+            " FROM animals a JOIN client c ON c.id = a.client_id"
+            " WHERE c.is_active = 1 AND a.name LIKE ? COLLATE NOCASE"
+            " ORDER BY a.name COLLATE NOCASE, c.name COLLATE NOCASE",
+            (f"%{term.strip()}%",),
+        ).fetchall()
+    )
 
 
 def list_animals_for_client(

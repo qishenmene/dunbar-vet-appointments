@@ -17,6 +17,7 @@
 </head>
 <body>
   <h1>Animals</h1>
+  <p><a href="{{ url_for('animals.search') }}">Search animals by name across all clients</a></p>
 
   {% with messages = get_flashed_messages() %}
     {% for message in messages %}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search animals — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    table { border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; }
+    th { background: #f0f4f8; }
+    form.inline { display: inline; }
+    input { padding: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Search animals by name</h1>
+
+  <form class="inline" method="get" action="{{ url_for('animals.search') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Animal name, e.g. Ruby" aria-label="Search animals by name" autofocus>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if q %}
+    <table>
+      <thead>
+        <tr><th>Animal</th><th>Species</th><th>Breed</th><th>Owner</th><th>Owner phone</th></tr>
+      </thead>
+      <tbody>
+        {% for animal in animals %}
+          <tr>
+            <td>{{ animal['name'] }}</td>
+            <td>{{ animal['species'] }}</td>
+            <td>{{ animal['breed'] }}</td>
+            <td>{{ animal['client_name'] }}</td>
+            <td>{{ animal['client_phone'] }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">No animals match “{{ q }}”.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Type part of an animal's name. Every match is shown with its owner, so
+       the fourteen Rubys can be told apart.</p>
+  {% endif %}
+</body>
+</html>
