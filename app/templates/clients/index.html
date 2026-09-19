@@ -39,7 +39,10 @@
           <td>{{ client['name'] }}</td>
           <td>{{ client['phone'] }}</td>
           <td>{{ client['address'] }}</td>
-          <td><a href="{{ url_for('animals.index', client_id=client['id']) }}">Animals</a></td>
+          <td>
+            <a href="{{ url_for('animals.index', client_id=client['id']) }}">Animals</a> |
+            <a href="{{ url_for('properties.index', client_id=client['id']) }}">Properties</a>
+          </td>
         </tr>
       {% else %}
         <tr><td colspan="4">{% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}</td></tr>
