@@ -22,6 +22,14 @@ adheres to [Semantic Versioning](https://semver.org/).
 - JSON API: `POST /api/consultations`,
   `POST /api/consultations/<id>/cancel` and `GET /api/schedule?date=YYYY-MM-DD`
 - Day schedule includes both appointment kinds (consultations and farm visits)
+- Farm day run sheet (DV-10): read-only, time-ordered page
+  `GET /farm/run?date=YYYY-MM-DD` for the large-animal vet listing that
+  day's farm visits with property, locality, client/contact phone, job,
+  head count, estimated km/time and gate/key/ring-first access notes;
+  cancelled visits stay visible and flagged, in-clinic consultations are
+  kept off the farm sheet, and the `farm_visits` table is extended with
+  `property_id`, `job_description`, `head_count` and `est_km` (booking
+  itself and timetable rules for farm visits remain DV-07)
 
 ### Planned for the sprint
 
