@@ -13,6 +13,8 @@ adheres to [Semantic Versioning](https://semver.org/).
   client and list all animals belonging to one client (DV-03)
 - Animal search: find animals by name across every client, returning every
   match with its owner and contact phone (DV-04)
+- Property records: create, find, update and remove rural properties per
+  client, with locality and gate/key/road access notes (DV-05)
 
 ### Planned for the sprint
 
