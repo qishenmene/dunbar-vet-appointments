@@ -28,8 +28,10 @@ def create_app(config_name: str | None = None) -> Flask:
     def index():
         return render_template("index.html")
 
+    from .animals import animals_bp
     from .clients import clients_bp
 
     app.register_blueprint(clients_bp)
+    app.register_blueprint(animals_bp)
 
     return app

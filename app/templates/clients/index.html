@@ -31,7 +31,7 @@
 
   <table>
     <thead>
-      <tr><th>Name</th><th>Phone</th><th>Address</th></tr>
+      <tr><th>Name</th><th>Phone</th><th>Address</th><th>Records</th></tr>
     </thead>
     <tbody>
       {% for client in clients %}
@@ -39,9 +39,10 @@
           <td>{{ client['name'] }}</td>
           <td>{{ client['phone'] }}</td>
           <td>{{ client['address'] }}</td>
+          <td><a href="{{ url_for('animals.index', client_id=client['id']) }}">Animals</a></td>
         </tr>
       {% else %}
-        <tr><td colspan="3">{% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}</td></tr>
+        <tr><td colspan="4">{% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}</td></tr>
       {% endfor %}
     </tbody>
   </table>
