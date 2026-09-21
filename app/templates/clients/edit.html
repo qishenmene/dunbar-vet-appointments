@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit client — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    .flash { background: #fdecea; border: 1px solid #b42318; padding: 0.5rem 0.8rem; border-radius: 6px; }
+    input { padding: 0.35rem; }
+    label { display: inline-block; margin: 0.3rem 0; }
+  </style>
+</head>
+<body>
+  <h1>Edit client — {{ client['name'] }}</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <p>Status:
+    {% if client['is_active'] %}
+      Active
+    {% else %}
+      Inactive — past appointments remain on record
+    {% endif %}
+  </p>
+
+  <form method="post" action="{{ url_for('clients.update', client_id=client['id']) }}">
+    <p><label>Name (required):
+      <input type="text" name="name" value="{{ client['name'] }}" required>
+    </label></p>
+    <p><label>Phone:
+      <input type="text" name="phone" value="{{ client['phone'] }}">
+    </label></p>
+    <p><label>Address:
+      <input type="text" name="address" size="40" value="{{ client['address'] }}">
+    </label></p>
+    <p>
+      <button type="submit">Save changes</button>
+      <a href="{{ url_for('clients.index') }}">Back to clients</a>
+    </p>
+  </form>
+</body>
+</html>

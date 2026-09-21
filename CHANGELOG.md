@@ -9,6 +9,9 @@ adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 
 - Client records: create clients and search active clients by name (DV-01, #1)
+- Client records: update name, phone and address; deactivate and reactivate
+  clients; inactive clients are hidden from the default list but remain
+  findable via "Show inactive clients" so their history is preserved (DV-02, #2)
 - Animal records: record animals (name, species, optional breed) against a
   client and list all animals belonging to one client (DV-03)
 - Animal search: find animals by name across every client, returning every
@@ -33,7 +36,6 @@ adheres to [Semantic Versioning](https://semver.org/).
 
 ### Planned for the sprint
 
-- Client records: create, find, update, make inactive
 - Animals per client: create, list, search by animal name
 - Properties per client: create, find, update, remove
 - In-clinic consultations: book one animal into a valid 15-minute room slot
