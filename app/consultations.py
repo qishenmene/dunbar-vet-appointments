@@ -46,6 +46,35 @@ def _parse_scheduled_at(raw) -> datetime:
     return scheduled_at
 
 
+def ensure_room_free(db, room, scheduled_at: datetime, exclude_id: int | None = None):
+    """Raise 409 when *room* is already booked at *scheduled_at*.
+
+    ``exclude_id`` skips one consultation (the one being moved) so that
+    rescheduling never clashes with the appointment's own current slot.
+    Cancelled consultations never block a slot.
+    """
+    day = scheduled_at.date().isoformat()
+    slot_end = scheduled_at + timedelta(minutes=SLOT_MINUTES)
+    clashes = db.execute(
+        "SELECT id, scheduled_at, duration_minutes FROM consultations"
+        " WHERE room = ? AND status != 'cancelled'"
+        " AND substr(scheduled_at, 1, 10) = ?",
+        (room, day),
+    ).fetchall()
+    for clash in clashes:
+        if exclude_id is not None and clash["id"] == exclude_id:
+            continue
+        existing_start = datetime.fromisoformat(clash["scheduled_at"])
+        existing_end = existing_start + timedelta(minutes=clash["duration_minutes"])
+        if existing_start < slot_end and existing_end > scheduled_at:
+            raise BookingError(
+                f"Room {room} is already booked from "
+                f"{existing_start:%H:%M} to {existing_end:%H:%M} on {day};"
+                " please pick a free slot or the other room.",
+                409,
+            )
+
+
 def _consultation_dict(row) -> dict:
     return {
         "id": row["id"],
@@ -96,24 +125,7 @@ def book_consultation(animal_id, scheduled_at_raw, room) -> dict:
             f"Unknown room {room}; consultations are held in room 1 or room 2."
         )
 
-    day = scheduled_at.date().isoformat()
-    slot_end = scheduled_at + timedelta(minutes=SLOT_MINUTES)
-    clashes = db.execute(
-        "SELECT scheduled_at, duration_minutes FROM consultations"
-        " WHERE room = ? AND status != 'cancelled'"
-        " AND substr(scheduled_at, 1, 10) = ?",
-        (room, day),
-    ).fetchall()
-    for clash in clashes:
-        existing_start = datetime.fromisoformat(clash["scheduled_at"])
-        existing_end = existing_start + timedelta(minutes=clash["duration_minutes"])
-        if existing_start < slot_end and existing_end > scheduled_at:
-            raise BookingError(
-                f"Room {room} is already booked from "
-                f"{existing_start:%H:%M} to {existing_end:%H:%M} on {day};"
-                " please pick a free slot or the other room.",
-                409,
-            )
+    ensure_room_free(db, room, scheduled_at)
 
     cursor = db.execute(
         "INSERT INTO consultations (animal_id, room, scheduled_at, duration_minutes, status)"
