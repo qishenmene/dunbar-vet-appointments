@@ -32,6 +32,10 @@ adheres to [Semantic Versioning](https://semver.org/).
   visible; new endpoints `POST /api/consultations/<id>/reschedule`,
   `POST /api/farm-visits/<id>/reschedule` and `POST /api/farm-visits/<id>/cancel`
 - Day schedule includes both appointment kinds (consultations and farm visits)
+- Seed sample data from the case study (DV-12): `flask --app run.py seed-db`
+  loads fictional clients (Callaghan, McPherson, Kalinga Downs, Trevena),
+  8 animals, 3 properties with gate/key access notes, 6 consultations and
+  3 farm visits; no real personal data; re-seeding is idempotent
 - Farm day run sheet (DV-10): read-only, time-ordered page
   `GET /farm/run?date=YYYY-MM-DD` for the large-animal vet listing that
   day's farm visits with property, locality, client/contact phone, job,

@@ -9,6 +9,7 @@ from .animals import animals_bp
 from .appointments import bp as appointments_bp
 from .consultations import BookingError, bp as consultations_bp
 from .db import close_db, init_db_command
+from .seed import seed_data_command
 
 
 def create_app(config_name: str | None = None) -> Flask:
@@ -21,6 +22,7 @@ def create_app(config_name: str | None = None) -> Flask:
 
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db_command)
+    app.cli.add_command(seed_data_command)
 
     @app.errorhandler(BookingError)
     def handle_booking_error(exc):
