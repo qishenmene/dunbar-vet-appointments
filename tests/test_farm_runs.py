@@ -127,8 +127,12 @@ def test_two_appointment_kinds_are_kept_separate(client, app):
     _visit(app, property_id, "11:15", duration=120, job="Preg test", km=52)
     with app.app_context():
         db = get_db()
+        client_id = db.execute(
+            "INSERT INTO client (name) VALUES ('Ruby Owner')"
+        ).lastrowid
         animal_id = db.execute(
-            "INSERT INTO animals (name, species) VALUES ('Ruby', 'dog')"
+            "INSERT INTO animals (client_id, name, species) VALUES (?, 'Ruby', 'dog')",
+            (client_id,),
         ).lastrowid
         db.execute(
             "INSERT INTO consultations (animal_id, room, scheduled_at)"

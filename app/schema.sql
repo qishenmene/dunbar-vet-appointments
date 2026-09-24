@@ -53,12 +53,17 @@ CREATE TABLE IF NOT EXISTS consultations (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Farm visits: minimal rows so the day schedule can show both appointment
--- kinds; the farm visit story owns their full behaviour and fields.
+-- Farm visits: booked against a property; nullable property_id keeps stub
+-- rows valid until DV-07 enforces a mandatory property at booking. Extended
+-- fields (job, head count, estimated km) support the DV-10 farm run sheet.
 CREATE TABLE IF NOT EXISTS farm_visits (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    property_id INTEGER REFERENCES property(id),
     scheduled_at TEXT NOT NULL,
     duration_minutes INTEGER NOT NULL DEFAULT 60,
+    job_description TEXT NOT NULL DEFAULT '',
+    head_count INTEGER,
+    est_km INTEGER,
     status TEXT NOT NULL DEFAULT 'booked' CHECK (status IN ('booked', 'cancelled')),
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
