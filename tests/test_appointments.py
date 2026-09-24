@@ -13,9 +13,20 @@ SUNDAY = "2026-09-20"  # closed
 
 
 def create_animal(client, name="Bella", species="dog"):
-    response = client.post("/api/animals", json={"name": name, "species": species})
-    assert response.status_code == 201
-    return response.get_json()["animal"]["id"]
+    """Seed one client and one animal directly (booking prerequisites)."""
+    app = client.application
+    with app.app_context():
+        db = get_db()
+        cursor = db.execute(
+            "INSERT INTO client (name) VALUES (?)", (f"{name}'s owner",)
+        )
+        client_id = cursor.lastrowid
+        cursor = db.execute(
+            "INSERT INTO animals (client_id, name, species) VALUES (?, ?, ?)",
+            (client_id, name, species),
+        )
+        db.commit()
+        return cursor.lastrowid
 
 
 def book(client, animal_id, scheduled_at, room):
