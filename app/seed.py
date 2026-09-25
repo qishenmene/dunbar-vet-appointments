@@ -20,15 +20,15 @@ SEED_CLIENTS = [
 ]
 
 SEED_ANIMALS = [
-    # (animal_name, species) — client_id link arrives when DV-03 merges
-    ("Bella", "dog"),
-    ("Duke", "dog"),
-    ("Pixie", "cat"),
-    ("Rocky", "cat"),
-    ("Barney", "dog"),
-    ("Bossy", "cattle"),
-    ("Daisy", "cattle"),
-    ("Ginger", "cat"),
+    # (animal_name, species, owner_name)
+    ("Bella", "dog", "Martha Callaghan"),
+    ("Duke", "dog", "Hugh McPherson"),
+    ("Pixie", "cat", "Martha Callaghan"),
+    ("Rocky", "cat", "Hugh McPherson"),
+    ("Barney", "dog", "Pru Trevena"),
+    ("Bossy", "cattle", "Kalinga Downs Pastoral Co"),
+    ("Daisy", "cattle", "Kalinga Downs Pastoral Co"),
+    ("Ginger", "cat", "Pru Trevena"),
 ]
 
 SEED_PROPERTIES = [
@@ -97,15 +97,16 @@ def seed_data(app: Flask):
                 (name, phone, address),
             )
 
-        # Animals (stub schema: name+species only; client_id link arrives with DV-03)
-        for name, species in SEED_ANIMALS:
+        # Animals (linked to their owner via client_id, per DV-03 schema)
+        c_map = _client_id_map(db)
+        for name, species, owner in SEED_ANIMALS:
             db.execute(
-                "INSERT OR IGNORE INTO animals (name, species) VALUES (?, ?)",
-                (name, species),
+                "INSERT OR IGNORE INTO animals (client_id, name, species)"
+                " VALUES (?, ?, ?)",
+                (c_map[owner], name, species),
             )
 
         # Properties
-        c_map = _client_id_map(db)
         for owner, name, locality, notes in SEED_PROPERTIES:
             db.execute(
                 "INSERT OR IGNORE INTO property (client_id, name, locality, access_notes)"
