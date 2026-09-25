@@ -6,6 +6,7 @@ from flask import Flask, jsonify, render_template
 from config import INSTANCE_DIR, get_config
 
 from .animals import animals_bp
+from .appointments import bp as appointments_bp
 from .consultations import BookingError, bp as consultations_bp
 from .db import close_db, init_db_command
 
@@ -42,6 +43,7 @@ def create_app(config_name: str | None = None) -> Flask:
     app.register_blueprint(animals_bp)
     app.register_blueprint(properties_bp)
     app.register_blueprint(consultations_bp)
+    app.register_blueprint(appointments_bp)
     app.register_blueprint(farm_runs_bp)
 
     return app

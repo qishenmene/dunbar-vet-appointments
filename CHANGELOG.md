@@ -24,6 +24,13 @@ adheres to [Semantic Versioning](https://semver.org/).
   appear on the day schedule and can be cancelled with the record kept
 - JSON API: `POST /api/consultations`,
   `POST /api/consultations/<id>/cancel` and `GET /api/schedule?date=YYYY-MM-DD`
+- Reschedule or cancel an appointment (DV-08): move a booked consultation or
+  farm visit to another date/time under the same validation rules as booking
+  (consultations stay on the fifteen-minute timetable and a free room slot,
+  never clashing with the appointment's own current slot or any other
+  appointment), and cancel farm visits with the cancelled record kept
+  visible; new endpoints `POST /api/consultations/<id>/reschedule`,
+  `POST /api/farm-visits/<id>/reschedule` and `POST /api/farm-visits/<id>/cancel`
 - Day schedule includes both appointment kinds (consultations and farm visits)
 - Farm day run sheet (DV-10): read-only, time-ordered page
   `GET /farm/run?date=YYYY-MM-DD` for the large-animal vet listing that
