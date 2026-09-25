@@ -11,6 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/).
 - Client records: create clients and search active clients by name (DV-01, #1)
 - Animal records: record animals (name, species, optional breed) against a
   client and list all animals belonging to one client (DV-03)
+- Animal search: find animals by name across every client, returning every
+  match with its owner and contact phone (DV-04)
 
 ### Planned for the sprint
 
