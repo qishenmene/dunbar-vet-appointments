@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search properties — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    table { border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; }
+    form.inline { display: inline; }
+    input { padding: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Search properties by name</h1>
+
+  <form class="inline" method="get" action="{{ url_for('properties.search') }}">
+    <input type="search" name="q" value="{{ q }}" placeholder="Property name, e.g. Kalinga" aria-label="Search properties by name" autofocus>
+    <button type="submit">Search</button>
+  </form>
+
+  {% if q %}
+    <table>
+      <thead>
+        <tr><th>Property</th><th>Locality</th><th>Access notes</th><th>Client</th><th>Phone</th></tr>
+      </thead>
+      <tbody>
+        {% for p in properties %}
+          <tr>
+            <td>{{ p['name'] }}</td>
+            <td>{{ p['locality'] }}</td>
+            <td>{{ p['access_notes'] }}</td>
+            <td>{{ p['client_name'] }}</td>
+            <td>{{ p['client_phone'] }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="5">No properties match “{{ q }}”.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Type part of a property's name to find it across all clients.</p>
+  {% endif %}
+</body>
+</html>

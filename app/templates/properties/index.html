@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Properties — Dunbar Veterinary Clinic</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
+    h1 { font-size: 1.4rem; }
+    table { border-collapse: collapse; margin-top: 1rem; }
+    th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; }
+    .flash { background: #e6f4ea; border: 1px solid #1a7f37; padding: 0.5rem 0.8rem; border-radius: 6px; }
+    form.inline { display: inline; }
+    input, select, textarea { padding: 0.35rem; font-family: inherit; }
+    textarea { width: 18rem; }
+  </style>
+</head>
+<body>
+  <h1>Properties</h1>
+  <p><a href="{{ url_for('properties.search') }}">Search properties by name across all clients</a></p>
+
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <form class="inline" method="get" action="{{ url_for('properties.index') }}">
+    <label for="client_id">Client:</label>
+    <select id="client_id" name="client_id" required>
+      <option value="" disabled {% if not client %}selected{% endif %}>Select a client…</option>
+      {% for c in clients %}
+        <option value="{{ c['id'] }}" {% if client and client['id'] == c['id'] %}selected{% endif %}>{{ c['name'] }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit">Show properties</button>
+  </form>
+
+  {% if client %}
+    <h2>Properties for {{ client['name'] }}</h2>
+    <table>
+      <thead>
+        <tr><th>Property</th><th>Locality</th><th>Access notes (gates, keys, ring-first)</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for p in properties %}
+          <tr>
+            <td>{{ p['name'] }}</td>
+            <td>{{ p['locality'] }}</td>
+            <td>{{ p['access_notes'] }}</td>
+            <td>
+              <a href="{{ url_for('properties.index', client_id=client['id'], edit=p['id']) }}">Edit</a>
+              <form class="inline" method="post" action="{{ url_for('properties.delete', property_id=p['id']) }}" onsubmit="return confirm('Remove property {{ p['name'] }}?');">
+                <button type="submit">Remove</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4">No properties recorded for this client yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% if edit_property %}
+      <h2>Edit {{ edit_property['name'] }}</h2>
+      <form method="post" action="{{ url_for('properties.update', property_id=edit_property['id']) }}">
+        <p><label>Property name (required): <input type="text" name="name" value="{{ edit_property['name'] }}" required></label></p>
+        <p><label>Locality: <input type="text" name="locality" value="{{ edit_property['locality'] }}"></label></p>
+        <p><label>Access notes:<br>
+          <textarea name="access_notes" rows="3">{{ edit_property['access_notes'] }}</textarea></label></p>
+        <button type="submit">Save changes</button>
+        <a href="{{ url_for('properties.index', client_id=client['id']) }}">Cancel</a>
+      </form>
+    {% else %}
+      <h2>Add a property</h2>
+      <form method="post" action="{{ url_for('properties.create') }}">
+        <input type="hidden" name="client_id" value="{{ client['id'] }}">
+        <p><label>Property name (required): <input type="text" name="name" required placeholder="Kalinga Downs"></label></p>
+        <p><label>Locality: <input type="text" name="locality" placeholder="Coulson"></label></p>
+        <p><label>Access notes (gates, codes, dogs, ring-first):<br>
+          <textarea name="access_notes" rows="3" placeholder="3rd gate off Bunjurgen Rd; last gate has a chain, no code — ring first"></textarea></label></p>
+        <button type="submit">Add property</button>
+      </form>
+    {% endif %}
+  {% else %}
+    <p>Select a client to view and record their properties.</p>
+  {% endif %}
+</body>
+</html>

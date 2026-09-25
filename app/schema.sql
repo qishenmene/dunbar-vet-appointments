@@ -27,3 +27,15 @@ CREATE TABLE IF NOT EXISTS animals (
     breed       TEXT    NOT NULL DEFAULT '',
     created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
 );
+
+-- DV-05: rural properties belong to one client and hold the access details
+-- the vet needs before leaving town (gates, chains, codes, ring-first rules).
+-- Farm visits (DV-07) are booked against a property, not against an animal.
+CREATE TABLE IF NOT EXISTS property (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    client_id    INTEGER NOT NULL REFERENCES client(id),
+    name         TEXT    NOT NULL,
+    locality     TEXT    NOT NULL DEFAULT '',
+    access_notes TEXT    NOT NULL DEFAULT '',
+    created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+);

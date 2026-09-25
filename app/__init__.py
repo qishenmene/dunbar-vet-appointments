@@ -30,8 +30,10 @@ def create_app(config_name: str | None = None) -> Flask:
 
     from .animals import animals_bp
     from .clients import clients_bp
+    from .properties import properties_bp
 
     app.register_blueprint(clients_bp)
     app.register_blueprint(animals_bp)
+    app.register_blueprint(properties_bp)
 
     return app
