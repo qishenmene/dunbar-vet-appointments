@@ -7,12 +7,16 @@
   <style>
     body { font-family: Arial, Helvetica, sans-serif; margin: 2rem; color: #1f2933; }
     h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; }
     table { border-collapse: collapse; margin-top: 1rem; }
     th, td { border: 1px solid #cbd2d9; padding: 0.4rem 0.8rem; text-align: left; }
     th { background: #f0f4f8; }
+    tr.inactive td { color: #7b8794; font-style: italic; }
+    .badge { background: #e3e8ee; border-radius: 8px; padding: 0.1rem 0.5rem; font-size: 0.8rem; font-style: normal; }
     .flash { background: #e6f4ea; border: 1px solid #1a7f37; padding: 0.5rem 0.8rem; border-radius: 6px; }
     form.inline { display: inline; }
     input { padding: 0.35rem; }
+    .options { margin-top: 0.8rem; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -26,16 +30,26 @@
 
   <form class="inline" method="get" action="{{ url_for('clients.index') }}">
     <input type="search" name="q" value="{{ q }}" placeholder="Search by client name" aria-label="Search clients">
+    {% if include_inactive %}<input type="hidden" name="all" value="1">{% endif %}
     <button type="submit">Search</button>
   </form>
 
+  <p class="options">
+    {% if include_inactive %}
+      <a href="{{ url_for('clients.index', q=q) }}">Hide inactive clients</a>
+      (showing active and inactive clients)
+    {% else %}
+      <a href="{{ url_for('clients.index', q=q, all=1) }}">Show inactive clients</a>
+    {% endif %}
+  </p>
+
   <table>
     <thead>
-      <tr><th>Name</th><th>Phone</th><th>Address</th><th>Records</th></tr>
+      <tr><th>Name</th><th>Phone</th><th>Address</th><th>Records</th><th>Status</th><th>Actions</th></tr>
     </thead>
     <tbody>
       {% for client in clients %}
-        <tr>
+        <tr class="{{ '' if client['is_active'] else 'inactive' }}">
           <td>{{ client['name'] }}</td>
           <td>{{ client['phone'] }}</td>
           <td>{{ client['address'] }}</td>
@@ -43,9 +57,26 @@
             <a href="{{ url_for('animals.index', client_id=client['id']) }}">Animals</a> |
             <a href="{{ url_for('properties.index', client_id=client['id']) }}">Properties</a>
           </td>
+          <td>
+            {% if client['is_active'] %}Active{% else %}<span class="badge">Inactive</span>{% endif %}
+          </td>
+          <td>
+            <a href="{{ url_for('clients.edit', client_id=client['id']) }}">Edit</a>
+            {% if client['is_active'] %}
+              <form class="inline" method="post" action="{{ url_for('clients.deactivate', client_id=client['id']) }}">
+                <button type="submit">Deactivate</button>
+              </form>
+            {% else %}
+              <form class="inline" method="post" action="{{ url_for('clients.activate', client_id=client['id']) }}">
+                <button type="submit">Activate</button>
+              </form>
+            {% endif %}
+          </td>
         </tr>
       {% else %}
-        <tr><td colspan="4">{% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}</td></tr>
+        <tr><td colspan="6">
+          {% if q %}No clients match “{{ q }}”.{% else %}No clients yet.{% endif %}
+        </td></tr>
       {% endfor %}
     </tbody>
   </table>
