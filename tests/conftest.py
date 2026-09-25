@@ -18,6 +18,9 @@ def app(tmp_path, monkeypatch):
     monkeypatch.setenv("APP_ENV", "testing")
     monkeypatch.setenv("DATABASE_PATH", str(db_path))
     application = create_app("testing")
+    # Config class attributes are read from the environment at import time,
+    # so point this test app's database at the per-test tmp_path explicitly.
+    application.config["DATABASE_FILE"] = str(db_path)
     with application.app_context():
         init_db()
         yield application

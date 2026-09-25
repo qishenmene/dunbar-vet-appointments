@@ -39,3 +39,31 @@ CREATE TABLE IF NOT EXISTS property (
     access_notes TEXT    NOT NULL DEFAULT '',
     created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
 );
+
+-- DV-06: in-clinic consultations are fifteen-minute slots in room 1 or
+-- room 2. Every consultation starts in the 'booked' state; cancelling keeps
+-- the row so the appointment book retains a record of cancelled consultations.
+CREATE TABLE IF NOT EXISTS consultations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    animal_id INTEGER NOT NULL REFERENCES animals(id),
+    room INTEGER NOT NULL CHECK (room IN (1, 2)),
+    scheduled_at TEXT NOT NULL,
+    duration_minutes INTEGER NOT NULL DEFAULT 15,
+    status TEXT NOT NULL DEFAULT 'booked' CHECK (status IN ('booked', 'cancelled')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Farm visits: booked against a property; nullable property_id keeps stub
+-- rows valid until DV-07 enforces a mandatory property at booking. Extended
+-- fields (job, head count, estimated km) support the DV-10 farm run sheet.
+CREATE TABLE IF NOT EXISTS farm_visits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    property_id INTEGER REFERENCES property(id),
+    scheduled_at TEXT NOT NULL,
+    duration_minutes INTEGER NOT NULL DEFAULT 60,
+    job_description TEXT NOT NULL DEFAULT '',
+    head_count INTEGER,
+    est_km INTEGER,
+    status TEXT NOT NULL DEFAULT 'booked' CHECK (status IN ('booked', 'cancelled')),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
